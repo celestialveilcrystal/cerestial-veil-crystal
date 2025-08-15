@@ -1,0 +1,68 @@
+const PRODUCTS = [
+  {id:'rose-8', name:'玫瑰石手串 8mm', stone:'玫瑰石', size:'8mm', price:199,
+    img:'https://images.unsplash.com/photo-1617038260897-3f1a2b4ad3cb?q=80&w=1200&auto=format&fit=crop',
+    desc:'温柔能量与爱意日常款，A级珠子，弹力绳。'},
+  {id:'ame-10', name:'紫水晶手串 10mm', stone:'紫水晶', size:'10mm', price:269,
+    img:'https://images.unsplash.com/photo-1578926375605-eaf7559b1453?q=80&w=1200&auto=format&fit=crop',
+    desc:'沉静专注，透度佳，手围可定制。'},
+  {id:'tiger-8', name:'虎眼石手串 8mm', stone:'虎眼石', size:'8mm', price:179,
+    img:'https://images.unsplash.com/photo-1556228578-8fbf48510210?q=80&w=1200&auto=format&fit=crop',
+    desc:'纹理立体，单圈或叠戴皆宜。'},
+  {id:'obs-10', name:'黑曜石手串 10mm', stone:'黑曜石', size:'10mm', price:189,
+    img:'https://images.unsplash.com/photo-1617037417344-40f6b4c0e226?q=80&w=1200&auto=format&fit=crop',
+    desc:'低调百搭，高抛光珠面，佩戴顺滑。'},
+  {id:'cit-8', name:'黄水晶手串 8mm', stone:'黄水晶', size:'8mm', price:259,
+    img:'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop',
+    desc:'明朗通透，日常好运搭配。'}
+];
+
+const $ = (s)=>document.querySelector(s);
+const grid = $('#products');
+const search = $('#search');
+const stoneSel = $('#stone');
+const sizeSel = $('#size');
+
+// init filters
+const stones = ['all', ...new Set(PRODUCTS.map(p=>p.stone))];
+stones.forEach(s=>{
+  const o=document.createElement('option');
+  o.value=s; o.textContent=s==='all'?'全部材质':s; stoneSel.appendChild(o);
+});
+const sizes = ['all', ...new Set(PRODUCTS.map(p=>p.size))];
+sizes.forEach(s=>{
+  const o=document.createElement('option');
+  o.value=s; o.textContent=s==='all'?'全部珠径':s; sizeSel.appendChild(o);
+});
+
+function render(){
+  const q = search.value.trim().toLowerCase();
+  const st = stoneSel.value;
+  const sz = sizeSel.value;
+  const list = PRODUCTS.filter(p=>{
+    const okQ = !q || p.name.toLowerCase().includes(q) || p.stone.toLowerCase().includes(q);
+    const okS = st==='all' || p.stone===st;
+    const okZ = sz==='all' || p.size===sz;
+    return okQ && okS && okZ;
+  });
+  grid.innerHTML = list.map(p=>`
+    <article class="card">
+      <div class="card-img"><img src="${p.img}" alt="${p.name}"></div>
+      <div class="card-body">
+        <h3 class="card-title">${p.name}</h3>
+        <div class="meta">
+          <span class="badge">${p.stone}</span>
+          <span class="badge">${p.size}</span>
+          <span class="price">¥${p.price}</span>
+        </div>
+        <p class="desc">${p.desc}</p>
+        <a class="btn" href="mailto:hello@crystalquiet.example?subject=咨询:${encodeURIComponent(p.name)}&body=我想下单/咨询此款：${encodeURIComponent(p.name)}（${p.size}）">咨询下单</a>
+      </div>
+    </article>
+  `).join('');
+}
+render();
+search.addEventListener('input', render);
+stoneSel.addEventListener('change', render);
+sizeSel.addEventListener('change', render);
+
+document.getElementById('year').textContent = new Date().getFullYear();
